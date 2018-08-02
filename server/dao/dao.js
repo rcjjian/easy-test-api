@@ -22,19 +22,19 @@ class Dao {
         });
     }
 
-    deleteById(id){
+    removeById(id){
         let Model = this.getModel();
         return new Promise((resolve,reject) => {
-            Model.findByIdAndDelete(id,(err,data) => {
+            Model.remove({_id : new ObjectId(id)},(err,data) => {
                 return err ? reject(err) : resolve(data);
             });
         });
     }
 
-    list(limit_param){
+    list(where){
         let Model = this.getModel();
         return new Promise((resolve,reject) => {
-            Model.find(limit_param,(err,docs) => {
+            Model.find(where,(err,docs) => {
                 return err ? reject(err) : resolve(docs);
             });
         });

@@ -44,6 +44,38 @@ class ProjectController extends Controller{
             throw err;
         }
     }
+
+    async rename(ctx,next){
+        try{
+            super.update(ctx,next);
+            let name = ctx.request.body.name;
+            let id = ctx.request.body.id;
+
+            let result = await dao.updateOnSet(id,{name});
+
+            ctx.response.status = 200; //下个版本用 中间件方式杀掉你
+
+            return ctx.response.body = {
+                data : result
+            };
+        }catch(error){
+            throw error;
+        }
+    }
+
+    async remove(ctx,next){
+        try{
+            let id = ctx.request.body.id;
+            let result = await dao.removeById(id);
+
+            return ctx.response.body = {
+                data : result
+            };
+        }catch(error){
+            throw error;
+        }
+    }
+
 };
 
 module.exports = new ProjectController();

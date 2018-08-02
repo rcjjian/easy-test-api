@@ -9,8 +9,10 @@ class TestCaseController extends Controller{
         super();
     }
 
-    list(){
-        super.list();
+    async list(ctx,next){
+        super.list(ctx,next);
+        let project_id = ctx.request.body.project_id;
+        dao.list()
 
     }
 
@@ -32,25 +34,22 @@ class TestCaseController extends Controller{
         };
     }
 
-    async update(ctx,next){
+    async rename(ctx,next){
         super.update(ctx,next);
 
         let project_id = ctx.request.body.project_id;
         let test_case_id = ctx.request.body.test_case_id; // 测试用例
         let name = ctx.request.body.name; //测试用例名称
 
-        let result = await dao.update(project_id,test_case_id,name);
-
-        ctx.response.body = {
-            ok : result.ok,
-            data : {
-
+        try{
+            let result = await dao.update(project_id,test_case_id,name);
+            ctx.response.body = {
+                ok : result.ok,
             }
-
+        }catch(error){
+            throw error;
         }
     }
-
-
 };
 
 module.exports = new TestCaseController();

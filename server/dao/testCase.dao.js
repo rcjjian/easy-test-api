@@ -20,11 +20,20 @@ class TestCaseDao extends Dao{
     }
 
     async list(project_id,page_index,page_size){
-        let result = await super.list({
-            _id : new ObjectId(project_id),
-        });
-
-        return result;
+        try{
+            if(page_index != null && page_size != null){
+                var result = await super.listPage({
+                    _id : new ObjectId(project_id),
+                },page_index,page_size);
+            }else{
+                var result = await super.list({
+                    _id : new ObjectId(project_id),
+                });
+            }
+            return result;
+        }catch(error){
+            throw error;
+        }
     }
 
     /***
@@ -34,14 +43,18 @@ class TestCaseDao extends Dao{
      * @returns {Promise.<*>}
      */
     async create(project_id,test_case){
-        let result = await super.update({'_id':new ObjectId(project_id)},{
-            $push : {
-                "test_cases" : {
-                    name : test_case.name
+        try{
+            let result = await super.update({'_id':new ObjectId(project_id)},{
+                $push : {
+                    "test_cases" : {
+                        name : test_case.name
+                    }
                 }
-            }
-        });
-        return result;
+            });
+            return result;
+        }catch(error){
+            throw error;
+        }
     }
 
     /***
@@ -52,14 +65,17 @@ class TestCaseDao extends Dao{
      * @returns {Promise.<*>}
      */
     async update(project_id,test_case_id,name){
-        let result = await super.update({'_id':new ObjectId(project_id),'test_cases._id' : new ObjectId(test_case_id)},{
-            $set : {
-                'test_cases.$.name' : name
-            }
-        })
-        return result;
+        try{
+            let result = await super.update({'_id':new ObjectId(project_id),'test_cases._id' : new ObjectId(test_case_id)},{
+                $set : {
+                    'test_cases.$.name' : name
+                }
+            });
+            return result;
+        }catch(error){
+            throw error;
+        }
     }
-
 }
 
 

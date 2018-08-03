@@ -74,14 +74,14 @@ class TestTargetDao extends Dao{
      */
     async update(project_id,test_target_id,test_target){
         try{
+            let set_info = {};
+            for(let key in test_target){
+                if(key === 'test_case_id')test_target[key] = new ObjectId(test_target[key]);
+                set_info['test_targets.$.' + key] = test_target[key];
+            }
+
             let result = await super.update({'_id' : new ObjectId(project_id),'test_targets._id' : new ObjectId(test_target_id)},{
-                $set : {
-                    'test_targets.$.name' : test_target.name || '',
-                    'test_targets.$.test_case_id' : new ObjectId(test_target.test_case_id),
-                    'test_targets.$.url' : test_target.url || '',
-                    'test_targets.$.body' : test_target.body || '',
-                    'test_targets.$.expected' : test_target.expected || '',
-                }
+                $set : set_info
             });
             return result;
         }catch(error){

@@ -27,6 +27,20 @@ class ProjectController extends Controller{
         }
     }
 
+    async findById(ctx,next){
+        super.findById(ctx,next);
+        let id = ctx.params.id;
+        try{
+            let result = await dao.findById(id);
+            return ctx.response.body = {
+                data : result
+            };
+        }catch(error){
+            throw error;
+        }
+
+    }
+
     async create(ctx,next){
         super.create(ctx,next);
         try{
@@ -46,17 +60,15 @@ class ProjectController extends Controller{
     }
 
     async rename(ctx,next){
+        super.update(ctx,next);
         try{
-            super.update(ctx,next);
             let name = ctx.request.body.name;
             let id = ctx.request.body.id;
 
             let result = await dao.updateOnSet(id,{name});
-
             ctx.response.status = 200; //下个版本用 中间件方式杀掉你
-
             return ctx.response.body = {
-                data : result
+                ok : result.ok
             };
         }catch(error){
             throw error;
@@ -64,12 +76,12 @@ class ProjectController extends Controller{
     }
 
     async remove(ctx,next){
+        super.remove(ctx,next);
         try{
-            let id = ctx.request.body.id;
+            let id = ctx.params.id;
             let result = await dao.removeById(id);
-
             return ctx.response.body = {
-                data : result
+                ok : result.ok
             };
         }catch(error){
             throw error;

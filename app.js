@@ -6,12 +6,12 @@ const onerror = require('koa-onerror');
 const bodyparser = require('koa-bodyparser');
 const logger = require('koa-logger');
 
-const routes = require('./routes')(app); //初始化路由调用
-const db = require('./db')(); //初始化数据库
+require('./routes')(app); //初始化路由调用
+require('./db')(); //初始化数据库
 
 
 // error handler
-onerror(app)
+onerror(app);
 
 // middlewares
 app.use(bodyparser({

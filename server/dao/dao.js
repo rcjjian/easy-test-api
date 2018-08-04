@@ -13,76 +13,39 @@ class Dao {
         return mongoose.model(this.model_name);
     }
 
-    create(add_param){
-        let Model = this.getModel();
-        return new Promise((resolve,reject) => {
-            Model.create(add_param,(err,data) => {
-                return err ? reject(err) : resolve(data);
-            });
-        });
+    async create(add_param){
+        return await this.getModel().create(add_param);
     }
 
-    removeById(id){
-        let Model = this.getModel();
-        return new Promise((resolve,reject) => {
-            Model.remove({_id : new ObjectId(id)},(err,data) => {
-                return err ? reject(err) : resolve(data);
-            });
-        });
+    async removeById(id){
+        return await this.getModel().remove({_id : ObjectId(id)})
     }
 
-    list(where){
-        let Model = this.getModel();
-        return new Promise((resolve,reject) => {
-            Model.find(where,(err,docs) => {
-                return err ? reject(err) : resolve(docs);
-            });
-        });
+    async list(where){
+        return await this.getModel().find(where);
     }
 
-    listPage(limit_param,page_index,page_size){
-        let Model = this.getModel();
+    async listPage(limit_param,page_index,page_size){
+        let rows = await this.getModel().where(limit_param).skip(Number(page_index)).limit(Number(page_size)).exec();
+        let total_count = await this.getModel().countDocuments(limit_param);
+        return {rows,total_count};
+    }
 
-        return Promise.all([
-            Model.where(limit_param).skip(Number(page_index)).limit(Number(page_size)).exec(),
-            Model.countDocuments(limit_param,(err,count) => {
-                return err ? 0 : count;
-            })
-        ]).then(result => {
-            return {rows : result[0] ? result[0] : [], total_count : result[1]};
-        }).catch(err => {
-            return {rows : [], total_count : result[1]};
-        });
+    async findById(id){
+        return await this.getModel().findById(ObjectId(id));
     }
 
     /***
-     * 查询单个
+     * 更新 $set
+     * @param id
+     * @param set_param
      */
-    findById(id){
-        let Model = this.getModel();
-        return new Promise((resolve,reject) => {
-            Model.findById(id,(err,adventure) => {
-                return err ? reject(err) : resolve(adventure);
-            });
-        });
+    async updateOnSet(id,set_param){
+        return await this.getModel().update({ _id : ObjectId(id) }, {$set: set_param}).exec();
     }
 
-    updateOnSet(id,set_param){
-        let Model = this.getModel();
-        return new Promise((resolve,reject) => {
-            Model.update({ _id: new ObjectId(id) }, { $set: set_param}).exec((err,data) => {
-                return err ? reject(err) : resolve(data);
-            });
-        });
-    }
-
-    update(where,update_param){
-        let Model = this.getModel();
-        return new Promise((resolve,reject) => {
-            Model.update(where,update_param).exec((err,data) => {
-                return err ? reject(err) : resolve(data);
-            });
-        });
+    async update(where,update_param){
+        return await this.getModel().update(where,update_param).exec();
     }
 
 };

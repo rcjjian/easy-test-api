@@ -10,7 +10,7 @@ const fsUtil = require('./server/utils/fileUtil');
  * @param app
  * @returns {Promise.<void>}
  */
-module.exports = async app => {
+module.exports = async (app) => {
 
     console.log('initial router ....');
     try{
@@ -32,7 +32,6 @@ module.exports = async app => {
         });
 
         app.use(router.routes());
-
     }catch(error){
         console.log(error);
     }
